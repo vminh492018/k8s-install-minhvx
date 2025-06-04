@@ -294,9 +294,6 @@ kubectl taint nodes worker2.minhvx.k8s node-role.kubernetes.io/control-plane:NoS
 kubectl get nodes
 ```
 Tất cả node phải ở trạng thái "Ready" và đều có vai trò control-plane.
-
-> ![image](https://github.com/user-attachments/assets/849e9225-7f01-486b-86fc-efc6d44dde58)
-
 ---
 
 ## Triển khai NGINX test
