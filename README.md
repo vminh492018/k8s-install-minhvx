@@ -280,11 +280,3 @@ Truy cập vào external IP của service để kiểm tra.
 | HostNetwork  | Pod dùng trực tiếp network của node, bind luôn IP node. |
 
 Tùy vào setup mạng và bảo mật mà chọn phương án phù hợp.
-
----
-
-## Kết luận
-Bạn đã hoàn thành cài đặt và cấu hình một Kubernetes Cluster trên RHEL 9/CentOS 9! Bây giờ bạn đã sẵn sàng triển khai và vận hành các ứng dụng container hóa. Hãy tiếp tục khám phá và nâng cao kỹ năng với Kubernetes nhé!
-
----
-![image](https://github.com/user-attachments/assets/768c3515-7441-4c91-b844-26dd129a4d1e)
