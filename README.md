@@ -1,10 +1,6 @@
-
-
 # Hướng Dẫn Cài Đặt Kubernetes Cluster trên RHEL 9/CentOS 9
 
 ## Mục Lục
-- [Giới thiệu](#giới-thiệu)
-- [Tại sao chọn Kubernetes?](#tại-sao-chọn-kubernetes)
 - [Yêu cầu trước khi cài đặt](#yêu-cầu-trước-khi-cài-đặt)
 - [Các bước cài đặt Kubernetes Cluster trên RHEL 9/CentOS 9](#các-bước-cài-đặt-kubernetes-cluster-trên-rhel-9centos-9)
   - [Bước 1: Cài đặt Kernel Headers](#bước-1-cài-đặt-kernel-headers)
