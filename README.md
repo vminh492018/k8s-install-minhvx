@@ -251,12 +251,37 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-Triển khai Calico network:
+### Bước 3: Triển khai Pod Network với Calico
+
+**1. Tạo Tigera Operator (quản lý Calico):**
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/tigera-operator.yaml
+```
+
+**2. Chờ khoảng 30-60 giây cho Tigera Operator khởi tạo và các CRD được tạo ra.**  
+Bạn có thể kiểm tra CRD bằng lệnh:
+```bash
+kubectl get crd | grep tigera
+```
+Khi thấy các CRD như `installations.operator.tigera.io` xuất hiện, chuyển sang bước tiếp theo.
+
+**3. Tải file cấu hình custom resources và chỉnh sửa CIDR cho phù hợp:**
+```bash
 curl -O https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/custom-resources.yaml
 sed -i 's/cidr: 192\.168\.0\.0\/16/cidr: 10.244.0.0\/16/g' custom-resources.yaml
+```
+
+**4. Áp dụng cấu hình custom resources cho Calico:**
+```bash
 kubectl apply -f custom-resources.yaml
+```
+
+> **Lưu ý:**  
+> Nếu bạn gặp lỗi “no matches for kind ... ensure CRDs are installed first”, hãy đợi CRD được tạo xong rồi chạy lại lệnh `kubectl apply -f custom-resources.yaml`.
+
+**Sau khi hoàn tất, kiểm tra lại các pod trong namespace `calico-system` đã chạy thành công:**
+```bash
+kubectl get pods -n calico-system
 ```
 
 ### Bước 3: Thêm master thứ 2 và 3 vào control plane
