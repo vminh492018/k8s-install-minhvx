@@ -15,6 +15,7 @@
   - [Bước 9: Thêm các Node Worker](#bước-9-thêm-các-node-worker)
 - [Triển khai NGINX test](#triển-khai-nginx-test)
 - [Các phương pháp khác để expose service ra bên ngoài](#các-phương-pháp-khác-để-expose-service-ra-bên-ngoài)
+- [Mô hình triển khai nhiều Control Plane (HA)](#triển-khai-multi-master-control-plane)
 - [Kết luận](#kết-luận)
 
 ---
@@ -31,9 +32,9 @@
 - Thông tin demo:
   | Hostname               | RAM | Cores | OS                                       |
   |------------------------|-----|-------|-------------------------------------------|
-  | master.naijalabs.net   | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
-  | worker1.naijalabs.net  | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
-  | worker2.naijalabs.net  | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
+  | master.minhvx.k8s   | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
+  | worker1.minhvx.k8s  | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
+  | worker2.minhvx.k8s  | 4   | 2     | Red Hat Enterprise Linux release 9.3      |
 
 ## Các bước cài đặt Kubernetes Cluster trên RHEL 9/CentOS 9
 
@@ -280,3 +281,51 @@ Truy cập vào external IP của service để kiểm tra.
 | HostNetwork  | Pod dùng trực tiếp network của node, bind luôn IP node. |
 
 Tùy vào setup mạng và bảo mật mà chọn phương án phù hợp.
+
+---
+
+## Mô hình triển khai nhiều Control Plane (HA)
+### 5. Mô hình thứ hai: 3 master (worker)
+Đây là mô hình High Availability (HA) với 3 node master đều có thể kiêm cả chức năng worker.
+
+#### 5.1. Thực hiện trên server k8s-master-1
+
+```bash
+sudo kubeadm init --control-plane-endpoint "192.168.153.41:6443" --upload-certs
+mkdir -p $HOME/.kube 
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config 
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+```
+
+#### 5.2. Thực hiện trên server k8s-master-2 và k8s-master-3
+
+- Lấy lệnh `kubeadm join ...` từ log khi chạy `kubeadm init` ở k8s-master-1.
+- Thực hiện trên từng node:
+
+```bash
+sudo kubeadm join ... # (Lệnh join lấy từ log của master-1)
+mkdir -p $HOME/.kube 
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config 
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+```
+
+#### 5.3. Chỉ định 3 node đều có thể làm worker
+Bằng cách xóa taint, các node master đều có thể chạy workload như worker:
+
+```bash
+kubectl taint nodes <node-name> node-role.kubernetes.io/control-plane:NoSchedule-
+```
+
+Ví dụ cho cả 3 node:
+
+```bash
+kubectl taint nodes k8s-master-1 node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl taint nodes k8s-master-2 node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl taint nodes k8s-master-3 node-role.kubernetes.io/control-plane:NoSchedule-
+```
+
+> ![image](https://github.com/user-attachments/assets/849e9225-7f01-486b-86fc-efc6d44dde58)
+
+---
