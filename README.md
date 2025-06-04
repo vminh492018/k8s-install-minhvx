@@ -10,7 +10,7 @@
   - [Bước 5: Cài đặt Containerd](#bước-5-cài-đặt-containerd)
   - [Bước 6: Mở Firewall cho các port của Kubernetes](#bước-6-mở-firewall-cho-các-port-của-kubernetes)
   - [Bước 7: Cài đặt các thành phần Kubernetes](#bước-7-cài-đặt-các-thành-phần-kubernetes)
-- [Cấu hình Master Node](#cấu-hình-master-node)
+- [Mô hình triển khai cơ bản Master-Worker](#mô-hình-triển-khai-cơ-bản-master-worker)
   - [Bước 8: Khởi tạo Control Plane](#bước-8-khởi-tạo-control-plane)
   - [Bước 9: Thêm các Node Worker](#bước-9-thêm-các-node-worker)
 - [Mô hình triển khai nhiều Control Plane (HA) với 3 Master (Worker)](#mô-hình-triển-khai-nhiều-control-plane-ha-với-3-master-worker)
@@ -170,7 +170,7 @@ sudo systemctl enable --now kubelet.service
 
 ---
 
-## Cấu hình Master Node
+## Mô hình triển khai cơ bản Master-Worker
 
 ### Bước 8: Khởi tạo Control Plane
 **Lý do:** Đây là bước tạo node quản trị trung tâm cho cụm Kubernetes.
